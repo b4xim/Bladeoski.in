@@ -15,6 +15,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js" defer></script>
 
 <style>
   :root{
@@ -124,6 +125,45 @@
   .scroll-cue{ position:absolute; bottom:28px; left:50%; transform:translateX(-50%); z-index:1; width:22px; height:36px; border:1px solid var(--line); border-radius:12px; opacity:0; }
   .scroll-cue::before{ content:""; position:absolute; top:7px; left:50%; width:3px; height:7px; margin-left:-1.5px; background:var(--crimson-bright); border-radius:2px; animation:cue 1.8s ease-in-out infinite; }
   @keyframes cue{ 0%{ transform:translateY(0); opacity:1; } 70%{ opacity:0; } 100%{ transform:translateY(10px); opacity:0; } }
+
+  /* FLOATING DEVOPS ANIMATIONS */
+  .floating-elements{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+  .floating-item{ position:absolute; background:rgba(15,15,15,0.6); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:8px; box-shadow:0 20px 40px rgba(0,0,0,0.5); opacity:0.85; }
+  .terminal-float{ top:12%; left:4%; width:320px; transform:rotate(-4deg); animation:float1 14s ease-in-out infinite; }
+  .term-header{ padding:10px 14px; background:rgba(255,255,255,0.03); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:7px; border-radius:8px 8px 0 0; }
+  .term-header .dot{ width:10px; height:10px; border-radius:50%; }
+  .term-header .dot.red{ background:#ff5f56; }
+  .term-header .dot.yellow{ background:#ffbd2e; }
+  .term-header .dot.green{ background:#27c93f; }
+  .term-title{ margin-left:8px; font-family:var(--font-body); font-size:0.7rem; color:var(--slate); font-weight:500; letter-spacing:0.05em; }
+  .term-body{ padding:14px; font-family:'Courier New', monospace; font-size:0.8rem; line-height:1.6; color:var(--slate-light); }
+  .term-body .prompt{ color:var(--crimson-bright); font-weight:bold; }
+  .term-body .dim{ color:var(--slate); }
+  .term-body .success{ color:#27c93f; }
+  
+  .pipeline-float{ top:20%; right:4%; padding:18px; transform:rotate(3deg); animation:float2 16s ease-in-out infinite; display:flex; align-items:center; gap:14px; }
+  .pipe-node{ width:44px; height:44px; border-radius:10px; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; position:relative; transition:all .3s ease; }
+  .pipe-node svg{ width:22px; height:22px; color:var(--slate-light); transition:color .3s ease; }
+  .pipe-node.active{ border-color:var(--crimson-bright); box-shadow:0 0 20px rgba(192,57,43,0.3); }
+  .pipe-node.active svg{ color:var(--crimson-bright); }
+  .pipe-conn{ width:35px; height:2px; background:var(--line); position:relative; overflow:hidden; }
+  .pipe-flow{ position:absolute; top:0; left:0; bottom:0; width:12px; background:var(--crimson-bright); box-shadow:0 0 10px var(--crimson-bright); transform:translateX(-15px); }
+
+  .docker-float{ bottom:15%; left:8%; transform:rotate(5deg); animation:float3 15s ease-in-out infinite; display:flex; flex-direction:column; gap:6px; }
+  .docker-container{ width:140px; height:34px; background:rgba(36,150,237,0.08); border:1px solid rgba(36,150,237,0.25); border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-size:0.75rem; color:#2496ed; font-weight:700; letter-spacing:0.1em; position:relative; overflow:hidden; }
+  .docker-container::after{ content:""; position:absolute; top:0; left:-100%; width:50%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); animation:shimmer 4s infinite; }
+
+  @keyframes float1 { 0%, 100%{ transform:translateY(0) rotate(-4deg); } 50%{ transform:translateY(-20px) rotate(-2deg); } }
+  @keyframes float2 { 0%, 100%{ transform:translateY(0) rotate(3deg); } 50%{ transform:translateY(-18px) rotate(5deg); } }
+  @keyframes float3 { 0%, 100%{ transform:translateY(0) rotate(5deg); } 50%{ transform:translateY(-15px) rotate(3deg); } }
+  @keyframes shimmer { 100%{ left:200%; } }
+
+  @media (max-width: 1024px){
+    .floating-elements { opacity: 0.4; }
+  }
+  @media (max-width: 860px){
+    .floating-elements { display: none; }
+  }
 
   /* SECTIONS */
   section{ position:relative; padding:120px 0; }
@@ -297,6 +337,47 @@
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="beam" aria-hidden="true"></div>
     <div class="grid-floor" aria-hidden="true"></div>
+
+    <!-- DevOps Floating Animations -->
+    <div class="floating-elements" aria-hidden="true">
+      <!-- Terminal -->
+      <div class="floating-item terminal-float">
+        <div class="term-header">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="term-title">deploy.sh</span>
+        </div>
+        <div class="term-body">
+          <div><span class="prompt">root@k8s:~$ </span><span id="termTyping"></span><span class="cursor-blink"></span></div>
+          <div id="termOutput1" class="dim" style="opacity:0; margin-top:4px;">&gt; Building container image...</div>
+          <div id="termOutput2" class="dim" style="opacity:0;">&gt; Pushing to registry...</div>
+          <div id="termOutput3" class="success" style="opacity:0;">✓ Rollout completed successfully.</div>
+        </div>
+      </div>
+
+      <!-- CI/CD Pipeline -->
+      <div class="floating-item pipeline-float">
+        <div class="pipe-node active" id="pn1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="pipe-conn"><div class="pipe-flow" id="pipeFlow1"></div></div>
+        <div class="pipe-node" id="pn2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <div class="pipe-conn"><div class="pipe-flow" id="pipeFlow2"></div></div>
+        <div class="pipe-node" id="pn3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
+        </div>
+      </div>
+
+      <!-- Docker Stack -->
+      <div class="floating-item docker-float">
+        <div class="docker-container" style="background:rgba(227,79,38,0.08); border-color:rgba(227,79,38,0.25); color:#e34f26;">FRONTEND</div>
+        <div class="docker-container" style="background:rgba(97,218,251,0.08); border-color:rgba(97,218,251,0.25); color:#61dafb;">BACKEND API</div>
+        <div class="docker-container" style="background:rgba(51,103,145,0.08); border-color:rgba(51,103,145,0.25); color:#336791;">POSTGRES DB</div>
+        <div class="docker-container" style="background:rgba(203,56,55,0.08); border-color:rgba(203,56,55,0.25); color:#cb3837;">REDIS CACHE</div>
+      </div>
+    </div>
+
     <div class="hero-content">
       <p class="hero-tag" id="heroTag"><span class="dot">●</span> Open to Cloud &amp; DevOps roles</p>
       <h1 class="hero-name" id="heroName">Basim Ahamed</h1>
@@ -624,6 +705,7 @@
 
   window.addEventListener('load', function(){
     if(window.gsap){
+      if(window.TextPlugin) gsap.registerPlugin(TextPlugin);
       var tl = gsap.timeline({ delay:0.15 });
       tl.to('#heroTag', { opacity:1, y:0, duration:0.6, ease:'power2.out' })
         .from('#heroName', { y:30 }, '<')
@@ -632,6 +714,45 @@
         .to('#heroBio', { opacity:1, y:0, duration:0.7, ease:'power2.out' }, '-=0.1')
         .to('#heroCtas', { opacity:1, y:0, duration:0.7, ease:'power2.out' }, '-=0.4')
         .to('#scrollCue', { opacity:1, duration:0.6 }, '-=0.3');
+
+      // Floating DevOps Animations
+      if(window.TextPlugin) {
+        var tlTerm = gsap.timeline({ repeat: -1, repeatDelay: 2.5 });
+        tlTerm.to('#termTyping', { text: "kubectl apply -f manifest/", duration: 1.5, ease: "none" })
+              .to('#termOutput1', { opacity: 1, duration: 0.1 }, "+=0.3")
+              .to('#termOutput2', { opacity: 1, duration: 0.1 }, "+=0.5")
+              .to('#termOutput3', { opacity: 1, duration: 0.1 }, "+=0.6")
+              .to({}, { duration: 3 })
+              .set('#termTyping', { text: "" })
+              .set(['#termOutput1', '#termOutput2', '#termOutput3'], { opacity: 0 });
+      } else {
+        document.getElementById('termTyping').textContent = "kubectl apply -f manifest/";
+        document.getElementById('termOutput1').style.opacity = 1;
+        document.getElementById('termOutput2').style.opacity = 1;
+        document.getElementById('termOutput3').style.opacity = 1;
+      }
+
+      var tlPipe = gsap.timeline({ repeat: -1, repeatDelay: 1 });
+      tlPipe.to('#pipeFlow1', { x: 35, duration: 1, ease: "power1.inOut" })
+            .to('#pn2', { borderColor: 'var(--crimson-bright)', boxShadow: '0 0 20px rgba(192,57,43,0.3)', duration: 0.3 }, "-=0.2")
+            .to('#pn2 svg', { color: 'var(--crimson-bright)', duration: 0.3 }, "-=0.2")
+            .to('#pipeFlow2', { x: 35, duration: 1, ease: "power1.inOut" })
+            .to('#pn3', { borderColor: 'var(--crimson-bright)', boxShadow: '0 0 20px rgba(192,57,43,0.3)', duration: 0.3 }, "-=0.2")
+            .to('#pn3 svg', { color: 'var(--crimson-bright)', duration: 0.3 }, "-=0.2")
+            .to({}, { duration: 2 })
+            .set(['#pn2', '#pn3'], { clearProps: 'all' })
+            .set(['#pn2 svg', '#pn3 svg'], { clearProps: 'all' })
+            .set(['#pipeFlow1', '#pipeFlow2'], { x: -15 });
+
+      gsap.from('.docker-container', { 
+        y: 20, 
+        opacity: 0, 
+        stagger: -0.15, 
+        duration: 0.8, 
+        ease: "back.out(1.5)",
+        delay: 1.2 
+      });
+
       if(window.ScrollTrigger){
         gsap.registerPlugin(ScrollTrigger);
         gsap.utils.toArray('.reveal').forEach(function(el, i){
