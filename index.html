@@ -179,6 +179,14 @@
   @media (max-width: 1200px){ .scroll-pipeline{ right:15px; } }
   @media (max-width: 860px){ .scroll-pipeline{ display:none; } }
 
+  /* SYSTEM METRICS DASHBOARD */
+  .sys-metrics{ position:fixed; bottom:20px; left:20px; background:rgba(10,10,10,0.85); border:1px solid var(--line); padding:12px 16px; border-radius:6px; z-index:100; display:flex; flex-direction:column; gap:10px; font-family:var(--font-head); font-size:0.65rem; color:var(--slate); backdrop-filter:blur(6px); pointer-events:none; transition:opacity .3s; }
+  .metric{ display:flex; align-items:center; gap:10px; }
+  .metric span{ width:28px; letter-spacing:0.1em; font-weight:600; }
+  .metric .bar{ width:60px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; }
+  .metric .fill{ height:100%; background:var(--crimson-bright); width:0%; transition:width 0.2s ease; box-shadow:0 0 8px var(--crimson-bright); }
+  @media (max-width: 860px){ .sys-metrics{ display:none; } }
+
   /* SECTIONS */
   section{ position:relative; padding:120px 0; }
   .section-head{ margin-bottom:56px; }
@@ -240,9 +248,9 @@
   .cert-card:hover{ transform:translateY(-7px); border-color:var(--line-bright); box-shadow:0 20px 48px -16px rgba(0,0,0,0.7), 0 0 36px -8px rgba(192,57,43,0.3); }
   .cert-card:hover::after{ opacity:1; }
   .cert-badge-wrap{ width:96px; height:96px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; }
-  .cert-badge-wrap::before{ content:""; position:absolute; inset:-3px; border-radius:50%; background:conic-gradient(var(--crimson-bright), var(--crimson-deep), transparent, var(--crimson-bright)); opacity:0.32; animation:spin 9s linear infinite; }
+  .cert-badge-wrap::before{ content:""; position:absolute; inset:-3px; border-radius:50%; background:conic-gradient(var(--crimson-bright), var(--crimson-deep), transparent, var(--crimson-bright)); opacity:0.32; animation:spin 9s linear infinite; z-index:0; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
-  .cert-badge-wrap svg, .cert-badge-wrap img{ width:90px; height:90px; position:relative; z-index:1; object-fit:contain; }
+  .cert-badge-wrap svg, .cert-badge-wrap img{ width:90px; height:90px; position:relative; z-index:2; object-fit:contain; display:block; max-width:100%; }
   .cert-name{ font-family:var(--font-head); font-size:1rem; font-weight:700; color:#f1f1f1; line-height:1.3; }
   .cert-issuer{ font-size:0.76rem; font-family:var(--font-head); letter-spacing:0.12em; text-transform:uppercase; color:var(--crimson-bright); }
   .cert-code{ font-size:0.78rem; color:var(--slate); font-family:var(--font-head); background:rgba(148,163,184,0.07); border:1px solid var(--line); padding:4px 10px; border-radius:4px; letter-spacing:0.06em; }
@@ -651,6 +659,13 @@
   &copy; <span id="year"></span> Basim Kizhakathil. Built in the dark, shipped in the light <span>•</span> Designed &amp; coded solo.
 </footer>
 
+<!-- System Metrics Dashboard -->
+<div class="sys-metrics" aria-hidden="true" id="sysMetrics">
+  <div class="metric"><span>CPU</span><div class="bar"><div class="fill" id="cpuFill"></div></div></div>
+  <div class="metric"><span>MEM</span><div class="bar"><div class="fill" id="memFill"></div></div></div>
+  <div class="metric"><span>NET</span><div class="bar"><div class="fill" id="netFill"></div></div></div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -860,6 +875,78 @@
       if(!window.gsap){ fallbackHeroReveal(); typeOut(); }
       fallbackIO();
     }, 800);
+
+    // Deploying Button Micro-interaction
+    document.querySelectorAll('.card-link').forEach(function(link){
+      var originalHtml = link.innerHTML;
+      var isDeploying = false;
+      link.addEventListener('mouseenter', function(){
+        if(isDeploying || reduceMotion) return;
+        isDeploying = true;
+        var seq = ['Building...', 'Pushing...', 'Live 🟢'];
+        var i = 0;
+        link.innerHTML = seq[i];
+        var int = setInterval(function(){
+          i++;
+          if(i >= seq.length){
+            clearInterval(int);
+            setTimeout(function(){ link.innerHTML = originalHtml; isDeploying = false; }, 1200);
+          } else {
+            link.innerHTML = seq[i];
+          }
+        }, 350);
+      });
+    });
+
+    // Code Decryption Reveal
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+    if(window.ScrollTrigger && !reduceMotion){
+      document.querySelectorAll('.section-head h2').forEach(function(header) {
+        var originalText = header.innerText;
+        header.setAttribute('data-text', originalText);
+        ScrollTrigger.create({
+          trigger: header,
+          start: 'top 85%',
+          onEnter: function() {
+            var iter = 0;
+            clearInterval(header.decryptInterval);
+            header.decryptInterval = setInterval(function(){
+              header.innerText = originalText.split('').map(function(char, index){
+                if(char === ' ') return ' ';
+                if(index < iter) return char;
+                return chars[Math.floor(Math.random() * chars.length)];
+              }).join('');
+              if(iter >= originalText.length) clearInterval(header.decryptInterval);
+              iter += 1/2;
+            }, 30);
+          }
+        });
+      });
+    }
+
+    // System Metrics
+    var sysMetrics = document.getElementById('sysMetrics');
+    if(sysMetrics && !reduceMotion){
+      var cpuLoad = 10, memLoad = 20;
+      var scrollTimeout;
+      function updateMetrics(){
+        document.getElementById('cpuFill').style.width = cpuLoad + '%';
+        document.getElementById('memFill').style.width = memLoad + '%';
+        document.getElementById('netFill').style.width = (Math.random() * 40 + 10) + '%';
+      }
+      window.addEventListener('scroll', function(){
+        cpuLoad = Math.min(100, cpuLoad + 15);
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(function(){ cpuLoad = 10; updateMetrics(); }, 150);
+        updateMetrics();
+      }, { passive:true });
+      setInterval(function(){
+        memLoad = Math.min(95, memLoad + 0.5);
+        if(Math.random() > 0.8) memLoad = Math.max(20, memLoad - 10);
+        updateMetrics();
+      }, 2000);
+      updateMetrics();
+    }
   });
 })();
 </script>
