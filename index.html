@@ -271,8 +271,19 @@
   .social-link svg{ width:20px; height:20px; }
   .social-link:hover, .social-link:focus-visible{ transform:translateY(-4px); border-color:var(--crimson-bright); color:var(--crimson-bright); box-shadow:0 10px 26px -10px rgba(192,57,43,0.5); }
 
-  footer{ padding:32px 24px; text-align:center; font-size:0.82rem; color:var(--slate); border-top:1px solid var(--line); }
-  footer span{ color:var(--crimson-bright); }
+  /* GIT FOOTER */
+  .git-footer{ padding:60px 24px 80px; background:#050505; border-top:1px solid var(--line); font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:0.85rem; color:var(--slate); line-height:1.7; }
+  .git-log{ max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:20px; }
+  .git-commit{ display:flex; flex-direction:column; position:relative; padding-left:18px; }
+  .git-commit::before{ content:"*"; position:absolute; left:0; color:var(--crimson-bright); font-weight:bold; }
+  .git-commit::after{ content:""; position:absolute; left:4px; top:20px; bottom:-20px; width:1px; background:var(--line); }
+  .git-commit:last-child::after{ display:none; }
+  .git-hash{ color:#e3b341; }
+  .git-ref{ color:#61dafb; }
+  .git-msg{ color:#f1f1f1; margin-left:6px; }
+  .git-author{ color:var(--slate-light); font-size:0.75rem; margin-top:4px; padding-left:12px; border-left:1px solid var(--line); }
+  .git-prompt{ max-width:760px; margin:40px auto 0; color:#36a3d9; display:flex; align-items:center; font-size:0.9rem; }
+  .git-prompt span.dollar{ color:var(--crimson-bright); margin:0 8px; }
 
   @media (max-width: 860px){
     .about-grid{ grid-template-columns:1fr; gap:40px; }
@@ -655,8 +666,20 @@
 
 </main>
 
-<footer>
-  &copy; <span id="year"></span> Basim Kizhakathil. Built in the dark, shipped in the light <span>•</span> Designed &amp; coded solo.
+<footer class="git-footer">
+  <div class="git-log">
+    <div class="git-commit">
+      <div><span class="git-hash">c24a9b</span> <span class="git-ref">(HEAD -&gt; main, origin/main)</span> <span class="git-msg">Deploy Bladeoski portfolio &amp; creative features</span></div>
+      <div class="git-author">Basim Kizhakathil &lt;basim@bladeoski.in&gt;</div>
+    </div>
+    <div class="git-commit">
+      <div><span class="git-hash">8f10b2</span> <span class="git-msg">Add Kubernetes animations &amp; CI/CD pipeline scroll tracking</span></div>
+    </div>
+    <div class="git-commit">
+      <div><span class="git-hash">1a0c8d</span> <span class="git-msg">Initial commit: Built in the dark, shipped in the light</span></div>
+    </div>
+  </div>
+  <div class="git-prompt">~/portfolio <span class="dollar">$</span> <span class="cursor-blink">&nbsp;</span></div>
 </footer>
 
 <!-- System Metrics Dashboard -->
