@@ -242,7 +242,7 @@
   .cert-badge-wrap{ width:96px; height:96px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; }
   .cert-badge-wrap::before{ content:""; position:absolute; inset:-3px; border-radius:50%; background:conic-gradient(var(--crimson-bright), var(--crimson-deep), transparent, var(--crimson-bright)); opacity:0.32; animation:spin 9s linear infinite; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
-  .cert-badge-wrap svg{ width:90px; height:90px; position:relative; z-index:1; }
+  .cert-badge-wrap svg, .cert-badge-wrap img{ width:90px; height:90px; position:relative; z-index:1; object-fit:contain; }
   .cert-name{ font-family:var(--font-head); font-size:1rem; font-weight:700; color:#f1f1f1; line-height:1.3; }
   .cert-issuer{ font-size:0.76rem; font-family:var(--font-head); letter-spacing:0.12em; text-transform:uppercase; color:var(--crimson-bright); }
   .cert-code{ font-size:0.78rem; color:var(--slate); font-family:var(--font-head); background:rgba(148,163,184,0.07); border:1px solid var(--line); padding:4px 10px; border-radius:4px; letter-spacing:0.06em; }
@@ -580,20 +580,7 @@
         <!-- AWS SAA-C03 -->
         <div class="cert-card">
           <div class="cert-badge-wrap">
-            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="AWS Certified Solutions Architect Associate badge">
-              <polygon points="60,4 110,32 110,88 60,116 10,88 10,32" fill="#1a1a1a" stroke="#232f3e" stroke-width="2.5"/>
-              <polygon points="60,13 103,38 103,83 60,108 17,83 17,38" fill="#111820"/>
-              <!-- cloud shape -->
-              <ellipse cx="47" cy="48" rx="9" ry="7" fill="none" stroke="#FF9900" stroke-width="2.5"/>
-              <ellipse cx="60" cy="44" rx="10" ry="8" fill="none" stroke="#FF9900" stroke-width="2.5"/>
-              <ellipse cx="73" cy="48" rx="9" ry="7" fill="none" stroke="#FF9900" stroke-width="2.5"/>
-              <rect x="38" y="48" width="44" height="8" rx="0" fill="#111820"/>
-              <rect x="39" y="49" width="42" height="6" rx="0" fill="#111820"/>
-              <!-- AWS text -->
-              <text x="60" y="72" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#FF9900" letter-spacing="1">AWS</text>
-              <text x="60" y="85" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" fill="#8a9bb0" letter-spacing="0.8">SOLUTIONS ARCHITECT</text>
-              <text x="60" y="95" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" fill="#5a6b80" letter-spacing="0.5">ASSOCIATE</text>
-            </svg>
+            <img src="assets/aws-saa.png" alt="AWS Certified Solutions Architect Associate badge">
           </div>
           <div class="cert-name">AWS Certified Solutions Architect</div>
           <div class="cert-issuer">Amazon Web Services</div>
@@ -607,17 +594,7 @@
         <!-- Azure AZ-104 -->
         <div class="cert-card">
           <div class="cert-badge-wrap">
-            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Microsoft Azure Administrator Associate badge">
-              <polygon points="60,4 110,32 110,88 60,116 10,88 10,32" fill="#1a1a1a" stroke="#0078d4" stroke-width="2.5"/>
-              <polygon points="60,13 103,38 103,83 60,108 17,83 17,38" fill="#071626"/>
-              <!-- Azure A shape -->
-              <polygon points="60,26 43,76 51,76 60,50 69,76 77,76" fill="#0078d4"/>
-              <rect x="47" y="64" width="26" height="4" rx="1" fill="#071626"/>
-              <!-- underline accent -->
-              <line x1="28" y1="84" x2="92" y2="84" stroke="#0078d4" stroke-width="1.5" opacity="0.25"/>
-              <text x="60" y="95" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.8" fill="#8a9bb0" letter-spacing="0.7">AZURE ADMINISTRATOR</text>
-              <text x="60" y="104" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.2" fill="#5a6b80" letter-spacing="0.4">ASSOCIATE</text>
-            </svg>
+            <img src="https://learn.microsoft.com/en-us/media/learn/certification/badges/microsoft-certified-associate-badge.svg" alt="Microsoft Azure Administrator Associate badge">
           </div>
           <div class="cert-name">Microsoft Azure Administrator Associate</div>
           <div class="cert-issuer">Microsoft</div>
@@ -631,16 +608,7 @@
         <!-- Azure AZ-900 -->
         <div class="cert-card">
           <div class="cert-badge-wrap">
-            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Microsoft Azure Fundamentals badge">
-              <polygon points="60,4 110,32 110,88 60,116 10,88 10,32" fill="#1a1a1a" stroke="#50e6ff" stroke-width="2.5"/>
-              <polygon points="60,13 103,38 103,83 60,108 17,83 17,38" fill="#041424"/>
-              <!-- Azure A shape — lighter cyan -->
-              <polygon points="60,26 43,76 51,76 60,50 69,76 77,76" fill="#50e6ff"/>
-              <rect x="47" y="64" width="26" height="4" rx="1" fill="#041424"/>
-              <line x1="28" y1="84" x2="92" y2="84" stroke="#50e6ff" stroke-width="1.5" opacity="0.25"/>
-              <text x="60" y="95" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" fill="#8ab8d4" letter-spacing="0.6">AZURE FUNDAMENTALS</text>
-              <text x="60" y="104" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.2" fill="#5a8090" letter-spacing="0.4">MICROSOFT CERTIFIED</text>
-            </svg>
+            <img src="https://learn.microsoft.com/en-us/media/learn/certification/badges/microsoft-certified-fundamentals-badge.svg" alt="Microsoft Azure Fundamentals badge">
           </div>
           <div class="cert-name">Microsoft Azure Fundamentals</div>
           <div class="cert-issuer">Microsoft</div>
@@ -863,7 +831,7 @@
           scrollTrigger: { trigger: '.cert-grid', start: 'top 80%' },
           scale: 0.85, opacity: 0, stagger: 0.15, duration: 0.8, ease: "back.out(1.2)"
         });
-        gsap.from('.cert-badge-wrap svg', {
+        gsap.from('.cert-badge-wrap > *', {
           scrollTrigger: { trigger: '.cert-grid', start: 'top 80%' },
           rotation: -180, opacity: 0, stagger: 0.15, duration: 1, ease: "back.out(1.5)"
         });
