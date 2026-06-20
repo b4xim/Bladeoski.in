@@ -188,10 +188,10 @@
   /* EXPERIENCE */
   .experience{ background:#0a0a0a; border-top:1px solid var(--line); }
   .exp-timeline{ display:flex; flex-direction:column; position:relative; }
-  .exp-timeline::before{ content:""; position:absolute; left:0; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom, var(--crimson-bright), transparent); opacity:0.3; }
+  .timeline-line{ position:absolute; left:0; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom, var(--crimson-bright), transparent); opacity:0.3; transform-origin:top; }
   .exp-item{ padding:0 0 52px 36px; position:relative; }
   .exp-item:last-child{ padding-bottom:0; }
-  .exp-item::before{ content:""; position:absolute; left:-4.5px; top:8px; width:10px; height:10px; border-radius:50%; background:var(--crimson-bright); box-shadow:0 0 12px rgba(192,57,43,0.7); }
+  .exp-item::before{ content:""; position:absolute; left:-4.5px; top:8px; width:10px; height:10px; border-radius:50%; background:var(--crimson-bright); box-shadow:0 0 12px rgba(192,57,43,0.7); transform:scale(var(--dot-scale, 1)); }
   .exp-meta{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
   .exp-company{ font-family:var(--font-head); font-size:1.18rem; font-weight:700; color:#f1f1f1; }
   .exp-badge{ font-size:0.72rem; font-family:var(--font-head); font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--crimson-bright); background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.25); padding:3px 9px; border-radius:3px; }
@@ -409,7 +409,7 @@
             <div><b>∞</b><span>Side Projects</span></div>
           </div>
         </div>
-        <div class="skills-grid reveal" role="list" aria-label="Technical skills">
+        <div class="skills-grid" role="list" aria-label="Technical skills">
           <div class="skill-chip" role="listitem"><span class="bit"></span>AWS</div>
           <div class="skill-chip" role="listitem"><span class="bit"></span>Azure</div>
           <div class="skill-chip" role="listitem"><span class="bit"></span>Terraform</div>
@@ -435,8 +435,9 @@
         <h2>Experience</h2>
       </div>
       <div class="exp-timeline">
+        <div class="timeline-line"></div>
 
-        <div class="exp-item reveal">
+        <div class="exp-item">
           <div class="exp-meta">
             <span class="exp-company">Tata Consultancy Services</span>
             <span class="exp-badge">Current</span>
@@ -450,7 +451,7 @@
           </ul>
         </div>
 
-        <div class="exp-item reveal">
+        <div class="exp-item">
           <div class="exp-meta">
             <span class="exp-company">BIZTRAS</span>
             <span class="exp-badge">Internship</span>
@@ -475,7 +476,7 @@
       </div>
       <div class="project-grid">
 
-        <article class="card reveal">
+        <article class="card">
           <span class="card-index">01</span>
           <h3>CloudSocial</h3>
           <p>Full-stack social media platform containerized with Docker and ECR, deployed on AWS EC2 with ALB, Auto Scaling, RDS, ElastiCache, SQS, and SNS. GitHub Actions CI/CD pipeline automates builds, ECR pushes, and zero-downtime deployments.</p>
@@ -491,7 +492,7 @@
           </a>
         </article>
 
-        <article class="card reveal">
+        <article class="card">
           <span class="card-index">02</span>
           <h3>CI/CD Forge</h3>
           <p>End-to-end Jenkins pipeline integrated with Nexus for artifact management and SonarQube for static analysis and quality gates. Automated build, test, and deploy stages with Slack notifications — no manual releases, quality enforced on every commit.</p>
@@ -507,7 +508,7 @@
           </a>
         </article>
 
-        <article class="card reveal">
+        <article class="card">
           <span class="card-index">03</span>
           <h3>LiftShift IaC</h3>
           <p>Migrated a multi-tier Java app to AWS (EC2, ALB, Auto Scaling, S3, Route 53) with all infrastructure provisioned via Terraform modules. Ansible playbooks handle config across Ubuntu/CentOS hosts — zero manual setup, full environment consistency.</p>
@@ -537,7 +538,7 @@
       <div class="cert-grid">
 
         <!-- AWS SAA-C03 -->
-        <div class="cert-card reveal">
+        <div class="cert-card">
           <div class="cert-badge-wrap">
             <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="AWS Certified Solutions Architect Associate badge">
               <polygon points="60,4 110,32 110,88 60,116 10,88 10,32" fill="#1a1a1a" stroke="#232f3e" stroke-width="2.5"/>
@@ -564,7 +565,7 @@
         </div>
 
         <!-- Azure AZ-104 -->
-        <div class="cert-card reveal">
+        <div class="cert-card">
           <div class="cert-badge-wrap">
             <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Microsoft Azure Administrator Associate badge">
               <polygon points="60,4 110,32 110,88 60,116 10,88 10,32" fill="#1a1a1a" stroke="#0078d4" stroke-width="2.5"/>
@@ -588,7 +589,7 @@
         </div>
 
         <!-- Azure AZ-900 -->
-        <div class="cert-card reveal">
+        <div class="cert-card">
           <div class="cert-badge-wrap">
             <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Microsoft Azure Fundamentals badge">
               <polygon points="60,4 110,32 110,88 60,116 10,88 10,32" fill="#1a1a1a" stroke="#50e6ff" stroke-width="2.5"/>
@@ -755,6 +756,8 @@
 
       if(window.ScrollTrigger){
         gsap.registerPlugin(ScrollTrigger);
+        
+        // Base reveals
         gsap.utils.toArray('.reveal').forEach(function(el, i){
           gsap.fromTo(el, { opacity:0, y:28 }, {
             opacity:1, y:0, duration:0.7, ease:'power2.out',
@@ -762,6 +765,47 @@
             scrollTrigger:{ trigger: el, start:'top 88%' }
           });
         });
+
+        // Creative Skills Stagger
+        gsap.from('.skill-chip', {
+          scrollTrigger: { trigger: '.skills-grid', start: 'top 85%' },
+          y: 40, opacity: 0, rotationX: -45, transformOrigin: "center top",
+          stagger: 0.04, duration: 0.7, ease: "back.out(1.5)"
+        });
+
+        // Experience Timeline Draw & Items Slide
+        gsap.from('.timeline-line', {
+          scrollTrigger: { trigger: '.exp-timeline', start: 'top 75%', end: 'bottom 60%', scrub: 1 },
+          scaleY: 0, ease: "none"
+        });
+        gsap.utils.toArray('.exp-item').forEach(function(item){
+          gsap.from(item, {
+            scrollTrigger: { trigger: item, start: 'top 85%' },
+            x: -40, opacity: 0, duration: 0.8, ease: "power3.out"
+          });
+          // Animate the dot
+          gsap.fromTo(item, { '--dot-scale': 0 }, {
+            scrollTrigger: { trigger: item, start: 'top 85%' },
+            '--dot-scale': 1, duration: 0.5, ease: "back.out(2)", delay: 0.2
+          });
+        });
+
+        // Projects Cards Stagger Up
+        gsap.from('.card', {
+          scrollTrigger: { trigger: '.project-grid', start: 'top 80%' },
+          y: 60, opacity: 0, stagger: 0.15, duration: 0.9, ease: "power4.out"
+        });
+
+        // Certifications Scale & Spin
+        gsap.from('.cert-card', {
+          scrollTrigger: { trigger: '.cert-grid', start: 'top 80%' },
+          scale: 0.85, opacity: 0, stagger: 0.15, duration: 0.8, ease: "back.out(1.2)"
+        });
+        gsap.from('.cert-badge-wrap svg', {
+          scrollTrigger: { trigger: '.cert-grid', start: 'top 80%' },
+          rotation: -180, opacity: 0, stagger: 0.15, duration: 1, ease: "back.out(1.5)"
+        });
+
       } else { fallbackIO(); }
     } else {
       fallbackHeroReveal(); typeOut(); fallbackIO();
