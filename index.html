@@ -1512,9 +1512,9 @@ footer .cr { color: var(--crimson-bright); }
 
     function setHud() {
       var n = Math.round(Math.random() * 30 + 8);
-      if (cpuEl) { cpuEl.style.width = cpu + '%'; cpuValEl.textContent = cpu + '%'; }
-      if (memEl) { memEl.style.width = mem + '%'; memValEl.textContent = mem + '%'; }
-      if (netEl) { netEl.style.width = n + '%'; netValEl.textContent = n + '%'; }
+      if (cpuEl) { cpuEl.style.width = cpu + '%'; cpuValEl.textContent = Math.round(cpu) + '%'; }
+      if (memEl) { memEl.style.width = mem + '%'; memValEl.textContent = mem.toFixed(1) + '%'; }
+      if (netEl) { netEl.style.width = n + '%'; netValEl.textContent = Math.round(n) + '%'; }
     }
     window.addEventListener('scroll', function() {
       cpu = Math.min(95, cpu + 18);
