@@ -1666,16 +1666,31 @@ footer .cr { color: var(--crimson-bright); }
     var el = document.getElementById('deployNum');
     if (!el || el.hasAttribute('data-animated')) return;
     el.setAttribute('data-animated', 'true');
-    var start = 0, end = 247, duration = 2000;
-    var startTime = null;
-    function step(timestamp) {
-      if (!startTime) startTime = timestamp;
-      var p = Math.min(1, (timestamp - startTime) / duration);
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = String(Math.floor(eased * end)).padStart(3, '0');
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+    
+    // Fetch actual commit count for this repository
+    fetch('https://api.github.com/repos/b4xim/Bladeoski.in/commits?per_page=1')
+      .then(function(res) {
+        if (!res.ok) throw new Error('API Error');
+        var link = res.headers.get('link');
+        if (link) {
+          var match = link.match(/page=(\d+)>; rel="last"/);
+          if (match) return parseInt(match[1], 10);
+        }
+        return 247; // fallback
+      })
+      .catch(function() { return 247; }) // fallback on rate limit/error
+      .then(function(end) {
+        var start = 0, duration = 2000;
+        var startTime = null;
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          var p = Math.min(1, (timestamp - startTime) / duration);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = String(Math.floor(eased * end)).padStart(3, '0');
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
   }
 
   /* ===== HERO ROLE TYPEWRITER ===== */
