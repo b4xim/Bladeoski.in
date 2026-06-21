@@ -762,19 +762,7 @@ footer .cr { color: var(--crimson-bright); }
   section { padding: 72px 0; }
 }
 
-/* ===== REDUCED MOTION ===== */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-  .hero-grid, .hero-beam { display: none; }
-  .reveal { opacity: 1 !important; transform: none !important; }
-  .section-title-inner { transform: none !important; }
-  .spotlight { display: none; }
-  #topo-canvas { display: none; }
-}
+
 </style>
 </head>
 <body>
@@ -1368,7 +1356,7 @@ footer .cr { color: var(--crimson-bright); }
 (function() {
   'use strict';
 
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduceMotion = false; // Forced false to ensure animations play on all devices, even in Low Power Mode
 
   /* ===== LENIS SMOOTH SCROLL ===== */
   var lenis;
@@ -1729,10 +1717,15 @@ footer .cr { color: var(--crimson-bright); }
   }
 
   /* ===== GSAP ANIMATIONS ===== */
-  window.addEventListener('load', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     if (reduceMotion) {
       document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
       document.querySelectorAll('.section-title-inner').forEach(function(el) { el.style.transform = 'none'; });
+      var heroEls = ['heroEyebrow', 'heroName', 'heroRole', 'heroBio', 'heroCtas', 'heroTerminal', 'scrollCue'];
+      heroEls.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
+      });
       initHeroType();
       return;
     }
@@ -1880,6 +1873,11 @@ footer .cr { color: var(--crimson-bright); }
 
   /* ===== FALLBACK REVEAL (no GSAP) ===== */
   function fallbackReveal() {
+    var heroEls = ['heroEyebrow', 'heroName', 'heroRole', 'heroBio', 'heroCtas', 'heroTerminal', 'scrollCue'];
+    heroEls.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
+    });
     if (!('IntersectionObserver' in window)) {
       document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
       return;
