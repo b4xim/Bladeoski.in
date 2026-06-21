@@ -521,8 +521,9 @@ section {
 
 /* Right: experience detail panel */
 .exp-panel { padding-left: 32px; border-left: 1px solid var(--line); }
-.exp-detail { display: none; }
-.exp-detail.active { display: block; }
+/* Both exp-details always visible, stacked */
+.exp-detail { display: block; margin-bottom: 56px; }
+.exp-detail:last-child { margin-bottom: 0; }
 .exp-company { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; color: var(--white); }
 .exp-badge {
   display: inline-flex; font-size: 0.7rem; font-family: var(--font-mono);
@@ -742,8 +743,6 @@ footer .cr { color: var(--crimson-bright); }
   .exp-layout { grid-template-columns: 1fr; }
   .exp-commits { display: none; }
   .exp-panel { border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 32px; }
-  .exp-detail { display: block !important; }
-  .exp-detail + .exp-detail { margin-top: 56px; }
 }
 @media (max-width: 860px) {
   .project-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1144,7 +1143,7 @@ footer .cr { color: var(--crimson-bright); }
 
     <div class="project-grid">
 
-      <article class="service-card reveal" tabindex="0">
+      <article class="service-card" tabindex="0">
         <div class="sc-header">
           <div class="sc-service">
             <div class="sc-status-dot"></div>
@@ -1179,7 +1178,7 @@ footer .cr { color: var(--crimson-bright); }
         </a>
       </article>
 
-      <article class="service-card reveal" tabindex="0">
+      <article class="service-card" tabindex="0">
         <div class="sc-header">
           <div class="sc-service">
             <div class="sc-status-dot"></div>
@@ -1214,7 +1213,7 @@ footer .cr { color: var(--crimson-bright); }
         </a>
       </article>
 
-      <article class="service-card reveal" tabindex="0">
+      <article class="service-card" tabindex="0">
         <div class="sc-header">
           <div class="sc-service">
             <div class="sc-status-dot"></div>
@@ -1293,7 +1292,7 @@ footer .cr { color: var(--crimson-bright); }
 
     <div class="cert-grid">
 
-      <div class="cert-card reveal">
+      <div class="cert-card">
         <div class="cert-img-wrap">
           <img src="assets/aws-saa.png" alt="AWS Certified Solutions Architect Associate badge">
         </div>
@@ -1306,7 +1305,7 @@ footer .cr { color: var(--crimson-bright); }
         </a>
       </div>
 
-      <div class="cert-card reveal">
+      <div class="cert-card">
         <div class="cert-img-wrap">
           <img src="https://learn.microsoft.com/en-us/media/learn/certification/badges/microsoft-certified-associate-badge.svg" alt="Microsoft Azure Administrator Associate badge">
         </div>
@@ -1319,7 +1318,7 @@ footer .cr { color: var(--crimson-bright); }
         </a>
       </div>
 
-      <div class="cert-card reveal">
+      <div class="cert-card">
         <div class="cert-img-wrap">
           <img src="https://learn.microsoft.com/en-us/media/learn/certification/badges/microsoft-certified-fundamentals-badge.svg" alt="Microsoft Azure Fundamentals badge">
         </div>
@@ -1657,10 +1656,28 @@ footer .cr { color: var(--crimson-bright); }
     runSequence(0);
   }
 
+  /* ===== COUNTER ANIMATION ===== */
+  function animateCounter(el) {
+    if (el.hasAttribute('data-animated')) return;
+    el.setAttribute('data-animated', 'true');
+    var end = parseFloat(el.getAttribute('data-target'));
+    var start = 0, duration = 2000, startTime = null;
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var p = Math.min(1, (timestamp - startTime) / duration);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var current = Math.floor(eased * end);
+      el.textContent = current;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   /* ===== DEPLOY COUNTER SIGNATURE MOMENT ===== */
   function animateDeployCounter() {
     var el = document.getElementById('deployNum');
-    if (!el) return;
+    if (!el || el.hasAttribute('data-animated')) return;
+    el.setAttribute('data-animated', 'true');
     var start = 0, end = 247, duration = 2000;
     var startTime = null;
     function step(timestamp) {
@@ -1757,6 +1774,16 @@ footer .cr { color: var(--crimson-bright); }
       }
     });
 
+    /* Stat counters animate when in view */
+    ScrollTrigger.create({
+      trigger: '.stat-strip',
+      start: 'top 85%',
+      once: true,
+      onEnter: function() {
+        document.querySelectorAll('.stat-count').forEach(animateCounter);
+      }
+    });
+
     /* Deploy counter */
     ScrollTrigger.create({
       trigger: '.deploy-moment',
@@ -1800,17 +1827,32 @@ footer .cr { color: var(--crimson-bright); }
       });
     });
 
-    /* Project cards staggered entrance */
-    gsap.from('.service-card', {
-      scrollTrigger: { trigger: '.project-grid', start: 'top 78%', once: true },
-      y: 60, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power4.out'
-    });
+    /* Project cards staggered entrance — cards have no reveal class so no conflict */
+    gsap.fromTo('.service-card',
+      { y: 60, opacity: 0 },
+      {
+        scrollTrigger: { trigger: '.project-grid', start: 'top 80%', once: true },
+        y: 0, opacity: 1, stagger: 0.14, duration: 0.85, ease: 'power4.out'
+      }
+    );
 
-    /* Cert cards scale in */
-    gsap.from('.cert-card', {
-      scrollTrigger: { trigger: '.cert-grid', start: 'top 80%', once: true },
-      scale: 0.88, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'back.out(1.4)'
-    });
+    /* Cert cards scale in — cards have no reveal class so no conflict */
+    gsap.fromTo('.cert-card',
+      { scale: 0.88, opacity: 0 },
+      {
+        scrollTrigger: { trigger: '.cert-grid', start: 'top 82%', once: true },
+        scale: 1, opacity: 1, stagger: 0.14, duration: 0.75, ease: 'back.out(1.4)'
+      }
+    );
+
+    /* Experience entries slide in staggered */
+    gsap.fromTo('.exp-detail',
+      { y: 30, opacity: 0 },
+      {
+        scrollTrigger: { trigger: '.exp-panel', start: 'top 82%', once: true },
+        y: 0, opacity: 1, stagger: 0.18, duration: 0.75, ease: 'power3.out'
+      }
+    );
 
     /* Parallax on hero grid */
     gsap.to('.hero-grid', {
@@ -1861,24 +1903,31 @@ footer .cr { color: var(--crimson-bright); }
     document.querySelectorAll('.section-title').forEach(function(el) { io.observe(el); });
   })();
 
-  /* ===== SKILL BARS FALLBACK ===== */
+  /* ===== SKILL BARS & STATS FALLBACK ===== */
   (function() {
     if (!('IntersectionObserver' in window)) {
       document.querySelectorAll('.skill-bar-fill').forEach(function(b) { b.style.width = b.getAttribute('data-w') + '%'; });
+      document.querySelectorAll('.stat-count').forEach(animateCounter);
       return;
     }
     var io = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.skill-bar-fill').forEach(function(b, i) {
-            setTimeout(function() { b.style.width = b.getAttribute('data-w') + '%'; }, i * 80);
-          });
+          if (entry.target.classList.contains('skills-terminal')) {
+            entry.target.querySelectorAll('.skill-bar-fill').forEach(function(b, i) {
+              setTimeout(function() { b.style.width = b.getAttribute('data-w') + '%'; }, i * 80);
+            });
+          } else if (entry.target.classList.contains('stat-strip')) {
+            entry.target.querySelectorAll('.stat-count').forEach(animateCounter);
+          }
           io.unobserve(entry.target);
         }
       });
     }, { threshold: 0.2 });
     var st = document.querySelector('.skills-terminal');
     if (st) io.observe(st);
+    var ss = document.querySelector('.stat-strip');
+    if (ss) io.observe(ss);
   })();
 
   /* ===== DEPLOY COUNTER FALLBACK ===== */
